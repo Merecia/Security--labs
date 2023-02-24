@@ -9,7 +9,7 @@ function encode(input, output) {
     try {
         const textFromFile = fs.readFileSync(input, 'utf8');
 
-        const bitBlockSize = 16;
+        const bitBlockSize = 8;
 
         const bitBlocks = encodeString(textFromFile, bitBlockSize);
 
