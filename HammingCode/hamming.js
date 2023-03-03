@@ -44,7 +44,7 @@ function decodeBitBlock(bitBlock) {
 
     const binaryString = bitBlockWithoutControlBitIndexes.join('');
 
-    return splitIntoBitBlocks(binaryString, 8)
+    return splitIntoBitBlocks(binaryString, 16)
            .map(bitBlock => bitBlock.join(''))
            .map(string => parseInt(string, 2))
            .map(code => String.fromCodePoint(code))
@@ -185,7 +185,7 @@ function symbolToBinary(symbol) {
 
     binary = symbol.charCodeAt(0).toString(2);
 
-    while (binary.length < 8) {
+    while (binary.length < 16) {
         binary = '0' + binary;
     }
 

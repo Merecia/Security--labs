@@ -1,15 +1,15 @@
 const fs = require('fs');
-const { 
-    encodeString, 
-    decodeBitBlocks, 
-    fixErrorsInBitBlocks 
+const {
+    encodeString,
+    decodeBitBlocks,
+    fixErrorsInBitBlocks
 } = require('./hamming');
 
 function encode(input, output) {
     try {
         const textFromFile = fs.readFileSync(input, 'utf8');
 
-        const bitBlockSize = 8;
+        const bitBlockSize = 16;
 
         const bitBlocks = encodeString(textFromFile, bitBlockSize);
 
@@ -41,7 +41,7 @@ function fixErrors(input, output) {
 
         fs.writeFileSync(output, JSON.stringify(bitBlocks, null, '\t'));
 
-    } catch(error) {    
+    } catch (error) {
         console.log(error);
     }
 }
