@@ -335,7 +335,7 @@ function convertBlockToHex(block) {
 }
 
 function convertBlockToPlaintext(block) {
-    return splitBigBlockIntoSmallBlocks(block, 8)
+    return splitBigBlockIntoSmallBlocks(block, BITS_IN_SYMBOL)
         .map(block => block.join(''))
         .map(string => parseInt(string, 2))
         .map(code => String.fromCodePoint(code))
@@ -397,7 +397,7 @@ function f(R, K) {
 
     const XOR_result = XOR(expansioned_R, K);
 
-    const smallBlocks = splitBigBlockIntoSmallBlocks(XOR_result, 6);
+    const smallBlocks = splitBigBlockIntoSmallBlocks(XOR_result, SMALL_BLOCK_SIZE);
 
     let joinedSmallBlocksAfterProcessing = [];
 

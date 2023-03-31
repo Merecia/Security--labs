@@ -1,7 +1,7 @@
 const {
     encodeHex,
     encodePlaintext
-} = require('./hex');
+} = require('./des');
 
 const hex1 = '0123456789ABCDEF';
 const key1 = 'FEFEFEFEFEFEFEFE';
