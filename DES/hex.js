@@ -13,7 +13,9 @@ const {
     BLOCK_SIZE,
     SMALL_BLOCK_SIZE,
     PLAINTEXT_LENGTH_MULTIPLICITY,
-    HEX_LENGTH_MULTIPLICITY
+    HEX_LENGTH_MULTIPLICITY,
+    ROUNDS_NUMBER,
+    BITS_IN_SYMBOL
 } = require('./constants');
 
 function symbolToBinary(symbol, binarySize) {
@@ -219,9 +221,9 @@ function encodeBlock(block, key) {
         console.log(D0);
         D[0] = D0;
 
-        console.log(`With C0 and D0 defined, we now create sixteen blocks C_i and D_i, 1 <= i <= 16`);
+        console.log(`With C0 and D0 defined, we now create sixteen blocks C_i and D_i, 1 <= i <= ${ROUNDS_NUMBER}`);
 
-        for (let i = 1; i <= 16; i++) {
+        for (let i = 1; i <= ROUNDS_NUMBER; i++) {
             C[i] = cyclicShift(C[i - 1], shiftsTable[i]);
             D[i] = cyclicShift(D[i - 1], shiftsTable[i]);
         }
@@ -232,10 +234,10 @@ function encodeBlock(block, key) {
         console.log("D: ");
         console.log(D);
 
-        console.log('We now form the keys K_i for 1 <= i <= 16');
+        console.log(`We now form the keys K_i for 1 <= i <= ${ROUNDS_NUMBER}`);
 
         let K = [];
-        for (let i = 1; i <= 16; i++) {
+        for (let i = 1; i <= ROUNDS_NUMBER; i++) {
             K[i] = permutation(joinBlocks(C[i], D[i]), subKeyPermutation);
             console.log(`K_${i}`);
             console.log(K[i]);
@@ -265,9 +267,9 @@ function encodeBlock(block, key) {
         console.log(R0);
         R[0] = R0;
 
-        console.log(`For 1 <= i <= 16 we calculate L_i and R_i`);
+        console.log(`For 1 <= i <= ${ROUNDS_NUMBER} we calculate L_i and R_i`);
 
-        for (let i = 1; i <= 16; i++) {
+        for (let i = 1; i <= ROUNDS_NUMBER; i++) {
             L[i] = R[i - 1];
             R[i] = XOR(L[i - 1], f(R[i - 1], K[i]));
         }
@@ -279,17 +281,23 @@ function encodeBlock(block, key) {
         console.log(R);
 
         console.log(`
-            We have blocks L_16 and R_16. We reverse order of this 
-            two blocks into the 64-bit block R16L16 and apply a final 
-            permutation and get final result.
+            We have blocks L_${ROUNDS_NUMBER} and R_${ROUNDS_NUMBER}. 
+            We reverse order of this two blocks into the 64-bit block 
+            R16L16 and apply a final permutation and get final result.
         `);
 
-        const R16L16 = joinBlocks(R[16], L[16]);
-        console.log('R16L16: ');
+        console.log(`L${ROUNDS_NUMBER}`);
+        console.log(L[ROUNDS_NUMBER]);
+
+        console.log(`R${ROUNDS_NUMBER}`);
+        console.log(R[ROUNDS_NUMBER]);
+
+        const R16L16 = joinBlocks(R[ROUNDS_NUMBER], L[ROUNDS_NUMBER]);
+        console.log(`R${ROUNDS_NUMBER}L${ROUNDS_NUMBER}: `);
         console.log(R16L16);
 
         const encodedMessage = permutation(
-            joinBlocks(R[16], L[16]),
+            joinBlocks(R[ROUNDS_NUMBER], L[ROUNDS_NUMBER]),
             finalMessagePermutation
         );
 
@@ -313,7 +321,9 @@ function convertHexToBlock(hex) {
 
 function convertPlaintextToBlock(plaintext) {
     let binary = '';
-    plaintext.split('').forEach(symbol => binary += symbolToBinary(symbol, 8));
+    plaintext.split('').forEach(symbol => 
+        binary += symbolToBinary(symbol, BITS_IN_SYMBOL)
+    );
     return binary.split('').map(Number);
 }
 
